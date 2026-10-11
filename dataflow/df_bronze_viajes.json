@@ -1,6 +1,9 @@
 {
 	"name": "df_bronze_viajes",
 	"properties": {
+		"folder": {
+			"name": "df_bronze"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

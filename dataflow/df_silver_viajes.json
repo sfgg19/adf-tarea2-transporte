@@ -57,7 +57,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
 				"source1 derive(ViajeId = trim(ViajeId),",
-				"          RutaHistoricaId = upper(trim(RutaHistoricaId)),",
+				"          RutaHistoricaId = 'RH-' + lpad(regexReplace(regexReplace(upper(trim(RutaHistoricaId)), '^RUTA\\\\s*', ''), '^R-?', ''), 2, '0'),",
 				"          VehiculoId = upper(trim(VehiculoId)),",
 				"          FechaServicio = iif(regexMatch(trim(FechaServicio), '^\\\\d{2}/\\\\d{2}/\\\\d{4}$'), toString(toDate(trim(FechaServicio), 'dd/MM/yyyy'), 'yyyy-MM-dd'), trim(FechaServicio)),",
 				"          HoraProgramada = iif(length(trim(HoraProgramada)) == 5, concat(trim(HoraProgramada), ':00'), trim(HoraProgramada)),",

@@ -53,7 +53,7 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
-				"source1 derive(VehiculoId = upper(trim(VehiculoId)),",
+				"source1 derive(VehiculoId = 'V-' + lpad(regexReplace(upper(trim(VehiculoId)), '[^0-9]', ''), 3, '0'),",
 				"          Placa = upper(trim(Placa)),",
 				"          TipoVehiculo = upper(trim(TipoVehiculo)),",
 				"          CapacidadEfectiva = trim(CapacidadEfectiva),",

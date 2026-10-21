@@ -55,7 +55,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
 				"source1 derive(RutaHistoricaId = 'RH-' + lpad(regexReplace(trim(RutaHistoricaId), '[^0-9]', ''), 2, '0'),",
-				"          CodigoRuta = upper(trim(toString(CodigoRuta))),",
+				"          CodigoRuta = upper(trim(CodigoRuta)),",
 				"          NombreRuta = trim(toString(NombreRuta)),",
 				"          Origen = trim(toString(Origen)),",
 				"          Destino = trim(toString(Destino)),",

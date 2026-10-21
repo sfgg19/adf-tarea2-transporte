@@ -1,0 +1,94 @@
+{
+	"name": "df_silver_rutas",
+	"properties": {
+		"folder": {
+			"name": "df_silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dw_bronze_rutas_sql",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dw_silver_rutas_sql",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AnioFuente as string,",
+				"          RutaHistoricaId as string,",
+				"          CodigoRuta as string,",
+				"          NombreRuta as string,",
+				"          Origen as string,",
+				"          Destino as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 derive(RutaHistoricaId = upper(trim(toString(RutaHistoricaId))),",
+				"          CodigoRuta = upper(trim(toString(CodigoRuta))),",
+				"          NombreRuta = trim(toString(NombreRuta)),",
+				"          Origen = trim(toString(Origen)),",
+				"          Destino = trim(toString(Destino)),",
+				"          VigenciaDesde = iif(regexMatch(trim(toString(VigenciaDesde)), '^\\\\d{2}/\\\\d{2}/\\\\d{4}$'), toString(toDate(trim(toString(VigenciaDesde)), 'dd/MM/yyyy'), 'yyyy-MM-dd'), trim(toString(VigenciaDesde))),",
+				"          VigenciaHasta = iif(regexMatch(trim(toString(VigenciaHasta)), '^\\\\d{2}/\\\\d{2}/\\\\d{4}$'), toString(toDate(trim(toString(VigenciaHasta)), 'dd/MM/yyyy'), 'yyyy-MM-dd'), trim(toString(VigenciaHasta))),",
+				"          Estado = upper(trim(toString(Estado)))) ~> derivedColumn1",
+				"derivedColumn1 derive(VigenciaDesde = toDate(VigenciaDesde, 'yyyy-MM-dd'),",
+				"          VigenciaHasta = toDate(VigenciaHasta, 'yyyy-MM-dd')) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          RutaHistoricaId as string,",
+				"          CodigoRuta as string,",
+				"          NombreRuta as string,",
+				"          Origen as string,",
+				"          Destino as string,",
+				"          VigenciaDesde as date,",
+				"          VigenciaHasta as date,",
+				"          Estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          RutaHistoricaId,",
+				"          CodigoRuta,",
+				"          NombreRuta,",
+				"          Origen,",
+				"          Destino,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

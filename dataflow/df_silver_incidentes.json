@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "split1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -64,7 +67,15 @@
 				"          FechaHoraRegistro = toTimestamp(FechaHoraRegistro, 'yyyy-MM-dd HH:mm:ss')) ~> derivedColumn2",
 				"derivedColumn2 split(!isNull(IncidenteId) && !isNull(TipoIncidente) && !isNull(Severidad) && !isNull(FechaHoraInicio) && !isNull(FechaHoraFin) && !isNull(FechaHoraRegistro) && !isNull(Descripcion),",
 				"     disjoint: false) ~> split1@(validos, rechazados)",
-				"split1@validos sink(allowSchemaDrift: true,",
+				"split1@validos aggregate(groupBy(IncidenteId),",
+				"     TipoIncidente = first(TipoIncidente),",
+				"          Severidad = first(Severidad),",
+				"          FechaHoraInicio = first(FechaHoraInicio),",
+				"          FechaHoraFin = first(FechaHoraFin),",
+				"          FechaHoraRegistro = first(FechaHoraRegistro),",
+				"          VehiculoId = first(VehiculoId),",
+				"          Descripcion = first(Descripcion)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          IncidenteId as string,",

@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "split1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -71,7 +74,17 @@
 				"          HoraLlegada = toTimestamp(HoraLlegada, 'HH:mm:ss')) ~> derivedColumn2",
 				"derivedColumn2 split(!isNull(ViajeId) && !isNull(RutaHistoricaId) && !isNull(VehiculoId) && !isNull(FechaServicio) && !isNull(HoraProgramada) && !isNull(HoraSalida) && !isNull(HoraLlegada) && !isNull(ValidacionesTarjeta) && !isNull(KmRecorridos) && !isNull(EstadoViaje),",
 				"     disjoint: false) ~> split1@(validos, rechazados)",
-				"split1@validos sink(allowSchemaDrift: true,",
+				"split1@validos aggregate(groupBy(ViajeId),",
+				"     RutaHistoricaId = first(RutaHistoricaId),",
+				"          VehiculoId = first(VehiculoId),",
+				"          FechaServicio = first(FechaServicio),",
+				"          HoraProgramada = first(HoraProgramada),",
+				"          HoraSalida = first(HoraSalida),",
+				"          HoraLlegada = first(HoraLlegada),",
+				"          ValidacionesTarjeta = first(ValidacionesTarjeta),",
+				"          KmRecorridos = first(KmRecorridos),",
+				"          EstadoViaje = first(EstadoViaje)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",

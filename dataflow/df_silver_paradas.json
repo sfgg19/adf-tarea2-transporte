@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "split1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -67,7 +70,16 @@
 				"          VigenciaHasta = toDate(VigenciaHasta, 'yyyy-MM-dd')) ~> derivedColumn2",
 				"derivedColumn2 split(!isNull(ParadaHistoricaId) && !isNull(CodigoPublicado) && !isNull(NombreParada) && !isNull(Zona) && !isNull(Latitud) && !isNull(Longitud) && !isNull(VigenciaDesde) && !isNull(VigenciaHasta) && !isNull(Estado),",
 				"     disjoint: false) ~> split1@(validos, rechazados)",
-				"split1@validos sink(allowSchemaDrift: true,",
+				"split1@validos aggregate(groupBy(ParadaHistoricaId),",
+				"     CodigoPublicado = first(CodigoPublicado),",
+				"          NombreParada = first(NombreParada),",
+				"          Zona = first(Zona),",
+				"          Latitud = first(Latitud),",
+				"          Longitud = first(Longitud),",
+				"          VigenciaDesde = first(VigenciaDesde),",
+				"          VigenciaHasta = first(VigenciaHasta),",
+				"          Estado = first(Estado)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ParadaHistoricaId as string,",

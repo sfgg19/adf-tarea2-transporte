@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -65,7 +68,9 @@
 				"          ValidacionesTarjeta = toInteger(ValidacionesTarjeta),",
 				"          Descensos = toInteger(Descensos),",
 				"          DemandaNoAtendida = toInteger(DemandaNoAtendida)) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 split(!isNull(DemandaId) && !isNull(FechaServicio) && !isNull(RutaHistoricaId) && !isNull(ParadaHistoricaId) && !isNull(Franja) && !isNull(ValidacionesTarjeta) && !isNull(Descensos) && !isNull(DemandaNoAtendida) && !isNull(Metodo),",
+				"     disjoint: false) ~> split1@(validos, rechazados)",
+				"split1@validos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          DemandaId as string,",

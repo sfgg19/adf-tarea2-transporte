@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -59,7 +62,9 @@
 				"derivedColumn1 derive(FechaHoraInicio = toTimestamp(FechaHoraInicio, 'yyyy-MM-dd HH:mm:ss'),",
 				"          FechaHoraFin = toTimestamp(FechaHoraFin, 'yyyy-MM-dd HH:mm:ss'),",
 				"          FechaHoraRegistro = toTimestamp(FechaHoraRegistro, 'yyyy-MM-dd HH:mm:ss')) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 split(!isNull(IncidenteId) && !isNull(TipoIncidente) && !isNull(Severidad) && !isNull(FechaHoraInicio) && !isNull(FechaHoraFin) && !isNull(FechaHoraRegistro) && !isNull(Descripcion),",
+				"     disjoint: false) ~> split1@(validos, rechazados)",
+				"split1@validos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          IncidenteId as string,",

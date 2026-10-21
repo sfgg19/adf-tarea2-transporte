@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -66,7 +69,9 @@
 				"          HoraProgramada = toTimestamp(HoraProgramada, 'HH:mm:ss'),",
 				"          HoraSalida = toTimestamp(HoraSalida, 'HH:mm:ss'),",
 				"          HoraLlegada = toTimestamp(HoraLlegada, 'HH:mm:ss')) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 split(!isNull(ViajeId) && !isNull(RutaHistoricaId) && !isNull(VehiculoId) && !isNull(FechaServicio) && !isNull(HoraProgramada) && !isNull(HoraSalida) && !isNull(HoraLlegada) && !isNull(ValidacionesTarjeta) && !isNull(KmRecorridos) && !isNull(EstadoViaje),",
+				"     disjoint: false) ~> split1@(validos, rechazados)",
+				"split1@validos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",

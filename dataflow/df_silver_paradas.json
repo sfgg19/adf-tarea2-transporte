@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -62,7 +65,9 @@
 				"          Longitud = toDecimal(Longitud, 9, 6),",
 				"          VigenciaDesde = toDate(VigenciaDesde, 'yyyy-MM-dd'),",
 				"          VigenciaHasta = toDate(VigenciaHasta, 'yyyy-MM-dd')) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 split(!isNull(ParadaHistoricaId) && !isNull(CodigoPublicado) && !isNull(NombreParada) && !isNull(Zona) && !isNull(Latitud) && !isNull(Longitud) && !isNull(VigenciaDesde) && !isNull(VigenciaHasta) && !isNull(Estado),",
+				"     disjoint: false) ~> split1@(validos, rechazados)",
+				"split1@validos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ParadaHistoricaId as string,",

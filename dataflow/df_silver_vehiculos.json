@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -57,7 +60,9 @@
 				"derivedColumn1 derive(CapacidadEfectiva = toInteger(CapacidadEfectiva),",
 				"          VigenciaDesde = toDate(VigenciaDesde, 'yyyy-MM-dd'),",
 				"          VigenciaHasta = toDate(VigenciaHasta, 'yyyy-MM-dd')) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 split(!isNull(VehiculoId) && !isNull(Placa) && !isNull(TipoVehiculo) && !isNull(CapacidadEfectiva) && !isNull(VigenciaDesde) && !isNull(VigenciaHasta) && !isNull(Estado),",
+				"     disjoint: false) ~> split1@(validos, rechazados)",
+				"split1@validos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          VehiculoId as string,",

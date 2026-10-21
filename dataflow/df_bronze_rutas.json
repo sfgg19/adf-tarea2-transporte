@@ -63,6 +63,9 @@
 				},
 				{
 					"name": "union3"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -153,7 +156,8 @@
 				"select1, select2 union(byName: true)~> union1",
 				"union1, select3 union(byName: true)~> union2",
 				"union2, sql union(byName: true)~> union3",
-				"union3 sink(allowSchemaDrift: true,",
+				"union3 filter(not(isNull(RutaHistoricaId))) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          AnioFuente as string,",

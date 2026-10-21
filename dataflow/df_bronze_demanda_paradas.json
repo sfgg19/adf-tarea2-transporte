@@ -63,6 +63,9 @@
 				},
 				{
 					"name": "union3"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -146,21 +149,22 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
 				"xlsx2023 select(mapColumn(",
-				"          FechaServicio = fecha_servicio,",
-				"          RutaHistoricaId = cod_ruta,",
-				"          ParadaHistoricaId = nro_parada,",
-				"          Franja = franja,",
-				"          ValidacionesTarjeta = estimacion_abordajes,",
-				"          Descensos = estimacion_descensos,",
-				"          DemandaNoAtendida = demanda_no_atendida,",
-				"          Metodo = metodo",
+				"          fecha_servicio,",
+				"          cod_ruta,",
+				"          nro_parada,",
+				"          franja,",
+				"          estimacion_abordajes,",
+				"          estimacion_descensos,",
+				"          demanda_no_atendida,",
+				"          metodo",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select3",
 				"select1, select2 union(byName: true)~> union1",
 				"union1, select3 union(byName: true)~> union2",
 				"union2, sql union(byName: true)~> union3",
-				"union3 sink(allowSchemaDrift: true,",
+				"union3 filter(not(isNull(DemandaId))) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          AnioFuente as string,",
